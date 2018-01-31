@@ -1,0 +1,5 @@
+[consulCatalog]
+endpoint = "consul:8500"
+exposedByDefault = true
+prefix = "traefik"
+frontEndRule = "PathPrefixStrip: /{{.ServiceName}}"

@@ -1,0 +1,22 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "completed",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20180128180947",
+    "dto": "no",
+    "service": "serviceClass",
+    "entityTableName": "task",
+    "jpaMetamodelFiltering": false,
+    "pagination": "no",
+    "microserviceName": "api",
+    "searchEngine": false
+}

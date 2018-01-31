@@ -1,0 +1,14 @@
+{
+  "generator-jhipster": {
+    "appsFolders": [
+      "api",
+      "gateway",
+      "ws"
+    ],
+    "directoryPath": "../",
+    "gatewayType": "traefik",
+    "monitoring": "no",
+    "serviceDiscoveryType": "consul",
+    "jwtSecretKey": "da23d23c90ba3cebda33bbdf24338643b62b3c96"
+  }
+}

@@ -1,0 +1,58 @@
+version: '2'
+services:
+    api-app:
+        image: api
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_CLOUD_CONSUL_HOST=consul
+            - SPRING_CLOUD_CONSUL_PORT=8500
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://api-postgresql:5432/api
+            - JHIPSTER_SLEEP=10
+    api-postgresql:
+        image: postgres:9.6.5
+        environment:
+            - POSTGRES_USER=api
+            - POSTGRES_PASSWORD=
+    
+#    gateway-app:
+#        image: gateway
+#        environment:
+#            - SPRING_PROFILES_ACTIVE=prod,swagger
+#            - SPRING_CLOUD_CONSUL_HOST=consul
+#            - SPRING_CLOUD_CONSUL_PORT=8500
+#            - SPRING_DATASOURCE_URL=jdbc:postgresql://gateway-postgresql:5432/gateway
+#            - JHIPSTER_SLEEP=10
+#    gateway-postgresql:
+#        image: postgres:9.6.5
+#        environment:
+#            - POSTGRES_USER=gateway
+#            - POSTGRES_PASSWORD=
+    
+    ws-app:
+        image: ws
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_CLOUD_CONSUL_HOST=consul
+            - SPRING_CLOUD_CONSUL_PORT=8500
+            - JHIPSTER_SLEEP=10
+            - APPLICATION_MESSAGEBROKER_ENABLED=true
+    
+    consul:
+        extends:
+            file: consul.yml
+            service: consul
+    consul-config-loader:
+        extends:
+            file: consul.yml
+            service: consul-config-loader
+    traefik:
+        extends:
+            file: traefik.yml
+            service: traefik
+
+    rabbit:
+        image: byteflair/rabbitmq-stomp
+        ports:
+            - "15672:15672"
+            - "61613:61613"
+            - "5672:5672"
