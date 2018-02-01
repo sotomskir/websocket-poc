@@ -116,5 +116,6 @@ jhipster:
 
 application:
     messageBroker:
-        host: localhost
+        enabled: true
+        host: rabbit
         port: 61613

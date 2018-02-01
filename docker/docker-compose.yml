@@ -1,19 +1,32 @@
-version: '2'
+version: '3.3'
 services:
-    api-app:
-        image: api
+    front:
+        build: ../angular-websocket
+        ports:
+            - 8888:8080
+        labels:
+            traefik.enable: "true"
+            traefik.port: "8080"
+            traefik.frontend.rule: "PathPrefixStrip: /"
+
+    api:
+        build: ../api
         environment:
             - SPRING_PROFILES_ACTIVE=prod,swagger
             - SPRING_CLOUD_CONSUL_HOST=consul
             - SPRING_CLOUD_CONSUL_PORT=8500
             - SPRING_DATASOURCE_URL=jdbc:postgresql://api-postgresql:5432/api
             - JHIPSTER_SLEEP=10
+        labels:
+            traefik.enable: "true"
+            traefik.port: "8082"
+            traefik.frontend.rule: "PathPrefixStrip: /checklist"
     api-postgresql:
         image: postgres:9.6.5
         environment:
             - POSTGRES_USER=api
             - POSTGRES_PASSWORD=
-    
+
 #    gateway-app:
 #        image: gateway
 #        environment:
@@ -27,28 +40,44 @@ services:
 #        environment:
 #            - POSTGRES_USER=gateway
 #            - POSTGRES_PASSWORD=
-    
-    ws-app:
-        image: ws
+
+    ws:
+        build: ../ws
         environment:
             - SPRING_PROFILES_ACTIVE=prod,swagger
             - SPRING_CLOUD_CONSUL_HOST=consul
             - SPRING_CLOUD_CONSUL_PORT=8500
             - JHIPSTER_SLEEP=10
             - APPLICATION_MESSAGEBROKER_ENABLED=true
-    
+        labels:
+            traefik.enable: "true"
+            traefik.port: "8081"
+            traefik.frontend.rule: "PathPrefixStrip: /ws"
     consul:
-        extends:
-            file: consul.yml
-            service: consul
+        image: consul:0.9.3
+        ports:
+            - 8300:8300
+            - 8500:8500
+            - 8600:8600
+        command: consul agent -dev -ui -client 0.0.0.0
     consul-config-loader:
-        extends:
-            file: consul.yml
-            service: consul-config-loader
+        image: jhipster/consul-config-loader:v0.2.2
+        volumes:
+            - ./central-server-config:/config
+        environment:
+            - INIT_SLEEP_SECONDS=5
+            - CONSUL_URL=consul
+            - CONSUL_PORT=8500
+
     traefik:
-        extends:
-            file: traefik.yml
-            service: traefik
+        image: traefik:1.5
+        command: --web
+        ports:
+          - 80:80
+          - 8080:8080
+        volumes:
+          - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+          - /var/run/docker.sock:/var/run/docker.sock
 
     rabbit:
         image: byteflair/rabbitmq-stomp
